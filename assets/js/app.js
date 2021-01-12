@@ -1,7 +1,7 @@
 // Creating the svg
 
 var svgWidth = 900;
-var svgHeight = 600;
+var svgHeight = 500;
 
 var margin ={
     top : 20,
@@ -64,8 +64,7 @@ d3.csv("assets/data/data.csv").then(function(healthData){
         .attr("cx", d => xLinearScale(d.age))
         .attr("cy", d => yLinearScale(d.smokes))
         .attr("r", 10)
-        .attr("fill", "gray")
-        .text(d => d.state);
+        .attr("fill", "gray");
 
     // The text on top of the scatter plot points
     chartGroup.append("g")
