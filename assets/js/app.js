@@ -90,29 +90,37 @@ d3.csv("assets/data/data.csv").then(function(healthData){
         .attr("font-size","8px")
         .attr("fill","black");
 
-        chartGroup.append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 0 - margin.left)
-        .attr("x", 0 - (height / 2))
-        .attr("dy", "4em")
-        .classed("axis-text", true)
-        .text("Smoking");
-
-        var labelsGroup = chartGroup.append("g")
+        var xLabelsGroup = chartGroup.append("g")
             .attr("transform",`translate(${width/2}, ${height + 15})`)
         
-        var povertylabel = labelsGroup.append("text")
+        var povertyLabel = xLabelsGroup.append("text")
             .attr("x",0)
             .attr("y",40)
             .attr("value", "poverty")
             .classed("axis-text",true)
             .text("Poverty");
 
-        var ageLabel = labelsGroup.append("text")
+        var ageLabel = xLabelsGroup.append("text")
             .attr("x", 0)
             .attr("y",20)
             .attr("value","age")
             .classed("axis-text", true)
             .text("Age");
         
+        var yLabelsGroup = chartGroup.append("g")
+            .attr("transform","rotate(-90)")
+
+        var smokingLabel = yLabelsGroup.append("text")
+            .attr("y", 0 - margin.left)
+            .attr("x", 0 - (height / 2))
+            .attr("dy", "4em")
+            .classed("axis-text", true)
+            .text("Smoking");
+
+        var obesityLabel = yLabelsGroup.append("text")
+            .attr("y", 0 - margin.left)
+            .attr("x", 0 - (height / 2))
+            .attr("dy", "1em")
+            .classed("axis-text", true)
+            .text("Obesity");
 });
