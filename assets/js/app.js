@@ -14,14 +14,18 @@ var width = svgWidth - margin.left - margin.right;
 var height = svgHeight - margin.bottom - margin.top;
 
 // Creating the scatter plot
+
+// Creating the svg wrapper
 var svg = d3.select("#scatter")
     .append("svg")
     .attr("width", svgWidth)
     .attr("height", svgHeight);
 
-// Creating a g
+// Creating a svg group called g
 var chartGroup = svg.append("g")
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+
 
 // Reading the csv file
 d3.csv("assets/data/data.csv").then(function(healthData){
@@ -34,7 +38,7 @@ d3.csv("assets/data/data.csv").then(function(healthData){
 
     // Setting the x Scale
     var xLinearScale = d3.scaleLinear()
-        .domain([d3.min(healthData, d => d.age) * 0.9 ,d3.max(healthData, d => d.age) * 1.1])
+        .domain([d3.min(healthData, d => d.age) * 0.95 ,d3.max(healthData, d => d.age) * 1.05])
         .range([0,width]);
 
     // Setting the y scale
@@ -94,9 +98,21 @@ d3.csv("assets/data/data.csv").then(function(healthData){
         .classed("axis-text", true)
         .text("Smoking");
 
-        chartGroup.append("text")
-        .attr("transform", `translate(${width / 2}, ${height + margin.top+ 15})`)
-        .classed("axis-text", true)
-        .text("Age");
+        var labelsGroup = chartGroup.append("g")
+            .attr("transform",`translate(${width/2}, ${height + 15})`)
+        
+        var povertylabel = labelsGroup.append("text")
+            .attr("x",0)
+            .attr("y",40)
+            .attr("value", "poverty")
+            .classed("axis-text",true)
+            .text("Poverty");
+
+        var ageLabel = labelsGroup.append("text")
+            .attr("x", 0)
+            .attr("y",20)
+            .attr("value","age")
+            .classed("axis-text", true)
+            .text("Age");
         
 });
