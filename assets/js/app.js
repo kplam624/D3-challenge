@@ -5,9 +5,9 @@ var svgHeight = 500;
 
 var margin ={
     top : 20,
-    bottom: 40,
-    left: 60,
-    right: 80
+    bottom: 80,
+    left: 100,
+    right: 40
 };
 
 var width = svgWidth - margin.left - margin.right;
@@ -90,12 +90,12 @@ d3.csv("assets/data/data.csv").then(function(healthData){
         .attr("transform", "rotate(-90)")
         .attr("y", 0 - margin.left)
         .attr("x", 0 - (height / 2))
-        .attr("dy", "1em")
+        .attr("dy", "4em")
         .classed("axis-text", true)
         .text("Smoking");
 
         chartGroup.append("text")
-        .attr("transform", `translate(${width / 2}, ${height + margin.top+ 10})`)
+        .attr("transform", `translate(${width / 2}, ${height + margin.top+ 15})`)
         .classed("axis-text", true)
         .text("Age");
         
