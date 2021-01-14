@@ -61,7 +61,7 @@ d3.csv("assets/data/data.csv").then(function(healthData){
         .call(leftAxis);
 
     // The Scatter plot
-    chartGroup.selectAll("circle")
+    var circlesGroup = chartGroup.selectAll("circle")
         .data(healthData)
         .enter()
         .append("circle")
@@ -71,7 +71,7 @@ d3.csv("assets/data/data.csv").then(function(healthData){
         .attr("fill", "gray");
 
     // The text on top of the scatter plot points
-    chartGroup.append("g")
+    var textGroup = chartGroup.append("g")
         .selectAll("text")
         .data(healthData)
         .enter()
