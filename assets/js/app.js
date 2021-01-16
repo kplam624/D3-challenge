@@ -25,7 +25,62 @@ var svg = d3.select("#scatter")
 var chartGroup = svg.append("g")
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
+var chosenXAxis = "age";
+var chosenYAxis = "smokes";
 
+function xScale(healthData, chosenXAxis){
+    var xLinearScale = d3.scaleLinear()
+        .domain([d3.min(healthData, d => d[chosenXAxis]) * 0.95 ,d3.max(healthData, d => d[chosenXAxis]) * 1.05])
+        .range([0,width]);
+        
+        return xLinearScale
+};
+
+function yScale(healthData, chosenYAxis){
+    var yLinearScale = d3.scaleLinear()
+        .domain([d3.min(healthData, d => d[chosenYAxis]) * 0.9, d3.max(healthData, d => d[chosenYAxis]) * 1.1])
+        .range([height,0]);
+        
+        return yLinearScale
+};
+
+function renderXAxes(newXScale, xAxis){
+    var bottomAxis = d3.axisBottom(newXScale);
+
+    xAxis.transition()
+    .duration(1000)
+    .call(bottomAxis);
+
+    return xAxis;
+};
+
+function renderYAxes(newYScale, yAxis){
+    var leftAxis = d3.axisLeft(newYScale);
+
+    yAxis.transition()
+    .duration(1000)
+    .call(leftAxis);
+
+    return yAxis;
+};
+
+function renderCirclesX(circlesGroup, newXScale, chosenXAxis) {
+
+    circlesGroup.transition()
+      .duration(1000)
+      .attr("cx", d => newXScale(d[chosenXAxis]));
+  
+    return circlesGroup;
+};
+
+function renderCirclesY(circlesGroup, newYScale, chosenYAxis) {
+
+    circlesGroup.transition()
+      .duration(1000)
+      .attr("cy", d => newYScale(d[chosenYAxis]));
+  
+    return circlesGroup;
+};
 
 // Reading the csv file
 d3.csv("assets/data/data.csv").then(function(healthData){
@@ -34,30 +89,28 @@ d3.csv("assets/data/data.csv").then(function(healthData){
     healthData.forEach(function(data){
         data.age = +data.age;
         data.smokes = +data.smokes;
+        data.obesity = +data.obesity;
+        data.poverty = +data.poverty;
     });
 
     // Setting the x Scale
-    var xLinearScale = d3.scaleLinear()
-        .domain([d3.min(healthData, d => d.age) * 0.95 ,d3.max(healthData, d => d.age) * 1.05])
-        .range([0,width]);
+    var xLinearScale = xScale(healthData, chosenXAxis);
 
     // Setting the y scale
-    var yLinearScale = d3.scaleLinear()
-        .domain([d3.min(healthData, d => d.smokes) * 0.9, d3.max(healthData, d => d.smokes) * 1.1])
-        .range([height,0]);
+    var yLinearScale = yScale(healthData, chosenYAxis);
     
     // Creating the bottom and left axis
     var bottomAxis = d3.axisBottom(xLinearScale);
     var leftAxis = d3.axisLeft(yLinearScale);
 
     // The x axis
-    chartGroup.append("g")
+    var xAxis = chartGroup.append("g")
         .classed("x-axis", true)
         .attr("transform", `translate(0, ${height})`)
         .call(bottomAxis);
 
     // The y axis
-    chartGroup.append("g")
+    var yAxis = chartGroup.append("g")
         .call(leftAxis);
 
     // The Scatter plot
@@ -65,8 +118,8 @@ d3.csv("assets/data/data.csv").then(function(healthData){
         .data(healthData)
         .enter()
         .append("circle")
-        .attr("cx", d => xLinearScale(d.age))
-        .attr("cy", d => yLinearScale(d.smokes))
+        .attr("cx", d => xLinearScale(d[chosenXAxis]))
+        .attr("cy", d => yLinearScale(d[chosenYAxis]))
         .attr("r", 10)
         .attr("fill", "gray");
 
@@ -97,14 +150,14 @@ d3.csv("assets/data/data.csv").then(function(healthData){
             .attr("x",0)
             .attr("y",40)
             .attr("value", "poverty")
-            .classed("axis-text",true)
+            .classed("inactive",true)
             .text("Poverty");
 
         var ageLabel = xLabelsGroup.append("text")
             .attr("x", 0)
             .attr("y",20)
             .attr("value","age")
-            .classed("axis-text", true)
+            .classed("active", true)
             .text("Age");
         
         var yLabelsGroup = chartGroup.append("g")
@@ -114,13 +167,48 @@ d3.csv("assets/data/data.csv").then(function(healthData){
             .attr("y", 0 - margin.left)
             .attr("x", 0 - (height / 2))
             .attr("dy", "4em")
-            .classed("axis-text", true)
+            .classed("active", true)
             .text("Smoking");
 
         var obesityLabel = yLabelsGroup.append("text")
             .attr("y", 0 - margin.left)
             .attr("x", 0 - (height / 2))
             .attr("dy", "1em")
-            .classed("axis-text", true)
+            .classed("inactive", true)
             .text("Obesity");
+
+        xLabelsGroup.selectAll("text")
+         .on("click",function(){
+             
+            var value = d3.select(this).attr("value");
+            
+             if (value !== chosenXAxis){
+                 chosenXAxis = value;
+
+                 xLinearScale = xScale(healthData, chosenXAxis);
+
+                 xAxis = renderXAxes(xLinearScale,xAxis);
+
+                 circlesGroup = renderCirclesX(circlesGroup, xLinearScale, chosenXAxis);
+             };
+            
+         });
+        
+        yLabelsGroup.selectAll("text")
+         .on("click",function(){
+
+            var value = d3.select(this).attr("value");
+
+             if (value !== chosenYAxis){
+
+                 chosenYAxis = value;
+                 
+                 yLinearScale = yScale(healthData, chosenYAxis);
+
+                 yAxis = renderYAxes(yLinearScale, yAxis);
+
+                 circlesGroup = renderCirclesY(circlesGroup, yLinearScale, chosenYAxis);
+             };
+
+         });
 });
