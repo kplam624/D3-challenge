@@ -25,9 +25,11 @@ var svg = d3.select("#scatter")
 var chartGroup = svg.append("g")
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
+// The initial values for both x and y.
 var chosenXAxis = "age";
 var chosenYAxis = "smokes";
 
+// Creates the x scale based on the x values given
 function xScale(healthData, chosenXAxis){
     var xLinearScale = d3.scaleLinear()
         .domain([d3.min(healthData, d => d[chosenXAxis]) * 0.95 ,d3.max(healthData, d => d[chosenXAxis]) * 1.05])
@@ -36,6 +38,7 @@ function xScale(healthData, chosenXAxis){
         return xLinearScale
 };
 
+// Creates the y scale based on the y values given
 function yScale(healthData, chosenYAxis){
     var yLinearScale = d3.scaleLinear()
         .domain([d3.min(healthData, d => d[chosenYAxis]) * 0.9, d3.max(healthData, d => d[chosenYAxis]) * 1.1])
@@ -44,6 +47,7 @@ function yScale(healthData, chosenYAxis){
         return yLinearScale
 };
 
+// Changes the x axis based on the x values.
 function renderXAxes(newXScale, xAxis){
     var bottomAxis = d3.axisBottom(newXScale);
 
@@ -54,6 +58,7 @@ function renderXAxes(newXScale, xAxis){
     return xAxis;
 };
 
+// Changes the y axis based on the y values.
 function renderYAxes(newYScale, yAxis){
     var leftAxis = d3.axisLeft(newYScale);
 
@@ -84,6 +89,7 @@ function renderCirclesY(circlesGroup, newYScale, chosenYAxis) {
     return circlesGroup;
 };
 
+// Changes the text and moves it on the x-axis.
 function renderTextX(textGroup, newXScale, chosenXAxis){
     textGroup.transition()
      .duration(1000)
@@ -94,6 +100,7 @@ function renderTextX(textGroup, newXScale, chosenXAxis){
     return textGroup;
 };
 
+// Changes the text and moves it on the y-axis.
 function renderTextY(textGroup, newYScale, chosenYAxis){
     textGroup.transition()
      .duration(1000)
@@ -103,6 +110,47 @@ function renderTextY(textGroup, newYScale, chosenYAxis){
     
     return textGroup;
 };
+
+function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
+
+    var xlabel;
+    var ylabel;
+  
+    if (chosenXAxis === "age") {
+      xlabel = "Age:";
+    }
+    else if(chosenXAxis === "obesity"){
+      xlabel = "Obesity:";
+    }
+    else {
+      xlabel = "Poverty:";
+    }
+
+    if (chosenYAxis === "smokes") {
+        ylabel = "Smoking:";
+      }
+      else if(chosenYAxis === "healthcare"){
+        ylabel = "Healthcare:";
+      }
+      else {
+        ylabel = "Income:";
+      }
+  
+    var toolTip = d3.tip()
+      .attr("class", "d3-tip")
+      .offset([-8,0])
+      .html(function(d) {
+        return (`${d.abbr}<br>${xlabel} ${d[chosenXAxis]}<br>${ylabel} ${d[chosenYAxis]}`);
+      });
+  
+    circlesGroup.call(toolTip);
+  
+    circlesGroup.on("mouseover", toolTip.show)
+      // onmouseout event
+      .on("mouseout", toolTip.hide);
+  
+    return circlesGroup;
+  };
 
 // Reading the csv file
 d3.csv("assets/data/data.csv").then(function(healthData){
@@ -145,7 +193,8 @@ d3.csv("assets/data/data.csv").then(function(healthData){
         .attr("cx", d => xLinearScale(d[chosenXAxis]))
         .attr("cy", d => yLinearScale(d[chosenYAxis]))
         .attr("r", 10)
-        .attr("fill", "gray");
+        .attr("fill", "gray")
+        .attr("stroke", "black");
 
     // The text on top of the scatter plot points
     var textGroup = chartGroup.append("g")
@@ -179,12 +228,12 @@ d3.csv("assets/data/data.csv").then(function(healthData){
             .classed("inactive",true)
             .text("Poverty");
 
-        var incomeLabel = xLabelsGroup.append("text")
+        var obesityLabel = xLabelsGroup.append("text")
             .attr("x", 0)
             .attr("y",40)
-            .attr("value","income")
+            .attr("value","obesity")
             .classed("inactive", true)
-            .text("Income");
+            .text("Obesity");
 
         var ageLabel = xLabelsGroup.append("text")
             .attr("x", 0)
@@ -201,7 +250,7 @@ d3.csv("assets/data/data.csv").then(function(healthData){
         var smokingLabel = yLabelsGroup.append("text")
             .attr("y", 0 - margin.left)
             .attr("x", 0 - (height / 2))
-            .attr("dy", "4em")
+            .attr("dy", "3em")
             .attr("value", "smokes")
             .classed("active", true)
             .text("Smoking");
@@ -209,41 +258,50 @@ d3.csv("assets/data/data.csv").then(function(healthData){
         var healthcareLabel = yLabelsGroup.append("text")
             .attr("y", 0 - margin.left)
             .attr("x", 0 - (height / 2))
-            .attr("dy", "3em")
+            .attr("dy", "2em")
             .attr("value","healthcare")
             .classed("inactive", true)
             .text("Healthcare");
 
-        var obesityLabel = yLabelsGroup.append("text")
+        var incomeLabel = yLabelsGroup.append("text")
             .attr("y", 0 - margin.left)
             .attr("x", 0 - (height / 2))
-            .attr("dy", "2em")
-            .attr("value","obesity")
+            .attr("dy", "1em")
+            .attr("value","income")
             .classed("inactive", true)
-            .text("Obesity");
+            .text("Income");
 
+
+        var circlesGroup = updateToolTip(chosenXAxis,chosenYAxis,circlesGroup);
         // Event listeners for the x-axis.
         xLabelsGroup.selectAll("text")
          .on("click",function(){
              
             var value = d3.select(this).attr("value");
-            
-             if (value !== chosenXAxis){ 
+            // Looks for any change.
+             if (value !== chosenXAxis){
+                
+                // Sets the new value
                 chosenXAxis = value;
 
+                // Creates a new x scale
                  xLinearScale = xScale(healthData, chosenXAxis);
 
+                //  Creates a new axis
                  xAxis = renderXAxes(xLinearScale,xAxis);
 
+                //  Relocates the circles on the x axis of the scatterplot
                  circlesGroup = renderCirclesX(circlesGroup, xLinearScale, chosenXAxis);
 
+                //  relocates the text on the x axis.
                  textGroup = renderTextX(textGroup, xLinearScale, chosenXAxis);
                 
-                if (chosenXAxis == "income"){
+                //  Changes the active status depending on the label selection
+                if (chosenXAxis == "obesity"){
                     ageLabel
                      .classed("active", false)
                      .classed("inactive", true)
-                    incomeLabel
+                    obesityLabel
                      .classed("active", true)
                      .classed("inactive", false)
                     povertyLabel
@@ -254,7 +312,7 @@ d3.csv("assets/data/data.csv").then(function(healthData){
                     ageLabel
                      .classed("active", false)
                      .classed("inactive", true)
-                    incomeLabel
+                    obesityLabel
                      .classed("active", false)
                      .classed("inactive", true)
                     povertyLabel
@@ -265,7 +323,7 @@ d3.csv("assets/data/data.csv").then(function(healthData){
                     ageLabel
                      .classed("active", true)
                      .classed("inactive", false)
-                    incomeLabel
+                    obesityLabel
                      .classed("active", false)
                      .classed("inactive", true)
                     povertyLabel
@@ -279,20 +337,28 @@ d3.csv("assets/data/data.csv").then(function(healthData){
         // Event listeners for the y-axis.
         yLabelsGroup.selectAll("text")
          .on("click",function(){
-
+            // Pulls the value of the selected label
             var value = d3.select(this).attr("value");
 
+            // Checks for any changes in the y labels
              if (value !== chosenYAxis){
+                
+                //  Sets the new value
                  chosenYAxis = value;
-                 
+                
+                //  Creates the new y scale
                  yLinearScale = yScale(healthData, chosenYAxis);
 
+                //  sets the new y axis
                  yAxis = renderYAxes(yLinearScale, yAxis);
 
+                //  Relocates the points based on their new y value
                  circlesGroup = renderCirclesY(circlesGroup, yLinearScale, chosenYAxis);
                  
+                // Relocates the text based on their new y value
                  textGroup = renderTextY(textGroup, yLinearScale, chosenYAxis);
                 
+                //  Sets the active status of the labels based on the label selection
                 if (chosenYAxis == "healthcare"){
                     smokingLabel
                      .classed("active", false)
@@ -300,18 +366,18 @@ d3.csv("assets/data/data.csv").then(function(healthData){
                     healthcareLabel
                      .classed("active", true)
                      .classed("inactive", false)
-                    obesityLabel
+                    incomeLabel
                      .classed("active", false)
                      .classed("inactive", true)
                      
-                } else if (chosenYAxis == "obesity"){
+                } else if (chosenYAxis == "income"){
                     smokingLabel
                      .classed("active", false)
                      .classed("inactive", true)
                     healthcareLabel
                      .classed("active", false)
                      .classed("inactive", true)
-                    obesityLabel
+                    incomeLabel
                      .classed("active", true)
                      .classed("inactive", false)
                 
@@ -322,11 +388,13 @@ d3.csv("assets/data/data.csv").then(function(healthData){
                     healthcareLabel
                      .classed("active", false)
                      .classed("inactive", true)
-                    obesityLabel
+                    incomeLabel
                      .classed("active", false)
                      .classed("inactive", true)
                 };
              };
 
          });
-});
+}).catch(function(error) {
+    console.log(error);
+  });
