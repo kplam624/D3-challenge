@@ -111,11 +111,14 @@ function renderTextY(textGroup, newYScale, chosenYAxis){
     return textGroup;
 };
 
+// Creates a tool tip
 function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
 
+    // The labels for the x axis and the y axis respectively
     var xlabel;
     var ylabel;
   
+    // Changes the label for the x, based on the selection
     if (chosenXAxis === "age") {
       xlabel = "Age:";
     }
@@ -126,6 +129,7 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
       xlabel = "Poverty:";
     }
 
+    // Changes the label for the y, based on the selection
     if (chosenYAxis === "smokes") {
         ylabel = "Smoking:";
       }
@@ -136,19 +140,22 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
         ylabel = "Income:";
       }
   
+    //   The format of the tooltip, with the help of css styles
     var toolTip = d3.tip()
       .attr("class", "d3-tip")
-      .offset([-8,0])
+      .offset([-6,3])
       .html(function(d) {
         return (`${d.abbr}<br>${xlabel} ${d[chosenXAxis]}<br>${ylabel} ${d[chosenYAxis]}`);
       });
   
     circlesGroup.call(toolTip);
-  
+      
+    // Shows and hides the tool tip on the mouseover event.
     circlesGroup.on("mouseover", toolTip.show)
       // onmouseout event
       .on("mouseout", toolTip.hide);
   
+    //   Returns the circles group
     return circlesGroup;
   };
 
@@ -293,6 +300,9 @@ d3.csv("assets/data/data.csv").then(function(healthData){
                 //  Relocates the circles on the x axis of the scatterplot
                  circlesGroup = renderCirclesX(circlesGroup, xLinearScale, chosenXAxis);
 
+                //  Updates the tooltip on the x values.
+                 circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup)
+
                 //  relocates the text on the x axis.
                  textGroup = renderTextX(textGroup, xLinearScale, chosenXAxis);
                 
@@ -355,6 +365,9 @@ d3.csv("assets/data/data.csv").then(function(healthData){
                 //  Relocates the points based on their new y value
                  circlesGroup = renderCirclesY(circlesGroup, yLinearScale, chosenYAxis);
                  
+                //  Updates the tool tip based on the y axis value.
+                 circlesGroup = updateToolTip(chosenXAxis,chosenYAxis,circlesGroup)
+
                 // Relocates the text based on their new y value
                  textGroup = renderTextY(textGroup, yLinearScale, chosenYAxis);
                 
