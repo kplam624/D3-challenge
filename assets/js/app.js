@@ -97,9 +97,11 @@ function renderTextX(textGroup, newXScale, chosenXAxis){
 function renderTextY(textGroup, newYScale, chosenYAxis){
     textGroup.transition()
      .duration(1000)
-     .attr("x",function(d){
+     .attr("y",function(d){
         return newYScale(d[chosenYAxis]);
      });
+    
+    return textGroup;
 };
 
 // Reading the csv file
@@ -240,6 +242,7 @@ d3.csv("assets/data/data.csv").then(function(healthData){
 
                  circlesGroup = renderCirclesY(circlesGroup, yLinearScale, chosenYAxis);
                  
+                 textGroup = renderTextY(textGroup, yLinearScale, chosenYAxis);
              };
 
          });
