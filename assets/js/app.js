@@ -74,6 +74,7 @@ function renderCirclesX(circlesGroup, newXScale, chosenXAxis) {
     return circlesGroup;
 };
 
+// Changes the position of the circle based on the y-axis.
 function renderCirclesY(circlesGroup, newYScale, chosenYAxis) {
 
     circlesGroup.transition()
@@ -81,6 +82,22 @@ function renderCirclesY(circlesGroup, newYScale, chosenYAxis) {
       .attr("cy", d => newYScale(d[chosenYAxis]));
   
     return circlesGroup;
+};
+
+function renderTextX(textGroup, newXScale, chosenXAxis){
+    textGroup.transition()
+     .duration(1000)
+     .attr("x",function(d){
+        return newXScale(d[chosenXAxis]);
+     });
+};
+
+function renderTextY(textGroup, newYScale, chosenYAxis){
+    textGroup.transition()
+     .duration(1000)
+     .attr("x",function(d){
+        return newYScale(d[chosenYAxis]);
+     });
 };
 
 // Reading the csv file
@@ -198,6 +215,8 @@ d3.csv("assets/data/data.csv").then(function(healthData){
                  xAxis = renderXAxes(xLinearScale,xAxis);
 
                  circlesGroup = renderCirclesX(circlesGroup, xLinearScale, chosenXAxis);
+
+                 textGroup = renderTextX(textGroup, newXScale, chosenXAxis);
              };
             
          });
@@ -218,6 +237,7 @@ d3.csv("assets/data/data.csv").then(function(healthData){
                  yAxis = renderYAxes(yLinearScale, yAxis);
 
                  circlesGroup = renderCirclesY(circlesGroup, yLinearScale, chosenYAxis);
+                 
              };
 
          });
