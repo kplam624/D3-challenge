@@ -133,19 +133,21 @@ d3.csv("assets/data/data.csv").then(function(healthData){
             return d.abbr;
         })
         .attr("x",function(d){
-            return xLinearScale(d.age);
+            return xLinearScale(d[chosenXAxis]);
         })
         .attr("y",function(d){
-            return yLinearScale(d.smokes)
+            return yLinearScale(d[chosenYAxis])
         })
         .attr("dx","-.5em")
         .attr("dy",".25em")
         .attr("font-size","8px")
         .attr("fill","black");
 
+        // Created the label group for the x axis
         var xLabelsGroup = chartGroup.append("g")
             .attr("transform",`translate(${width/2}, ${height + 15})`)
         
+        // Creates the titles for the x-axis.
         var povertyLabel = xLabelsGroup.append("text")
             .attr("x",0)
             .attr("y",40)
@@ -159,10 +161,12 @@ d3.csv("assets/data/data.csv").then(function(healthData){
             .attr("value","age")
             .classed("active", true)
             .text("Age");
-        
+
+        // Creates the label group for the y axis
         var yLabelsGroup = chartGroup.append("g")
             .attr("transform","rotate(-90)")
 
+        // Creates the titles for the y-axis.
         var smokingLabel = yLabelsGroup.append("text")
             .attr("y", 0 - margin.left)
             .attr("x", 0 - (height / 2))
@@ -177,6 +181,7 @@ d3.csv("assets/data/data.csv").then(function(healthData){
             .classed("inactive", true)
             .text("Obesity");
 
+        // Event listeners for the x-axis.
         xLabelsGroup.selectAll("text")
          .on("click",function(){
              
@@ -194,13 +199,15 @@ d3.csv("assets/data/data.csv").then(function(healthData){
             
          });
         
+        // Event listeners for the y-axis.
         yLabelsGroup.selectAll("text")
          .on("click",function(){
 
             var value = d3.select(this).attr("value");
+            
+            console.log(value);
 
              if (value !== chosenYAxis){
-
                  chosenYAxis = value;
                  
                  yLinearScale = yScale(healthData, chosenYAxis);
