@@ -113,6 +113,8 @@ d3.csv("assets/data/data.csv").then(function(healthData){
         data.smokes = +data.smokes;
         data.obesity = +data.obesity;
         data.poverty = +data.poverty;
+        data.income = +data.income;
+        data.healthcare = +data.healthcare;
     });
 
     // Setting the x Scale
@@ -172,10 +174,17 @@ d3.csv("assets/data/data.csv").then(function(healthData){
         // Creates the titles for the x-axis.
         var povertyLabel = xLabelsGroup.append("text")
             .attr("x",0)
-            .attr("y",40)
+            .attr("y",60)
             .attr("value", "poverty")
             .classed("inactive",true)
             .text("Poverty");
+
+        var incomeLabel = xLabelsGroup.append("text")
+            .attr("x", 0)
+            .attr("y",40)
+            .attr("value","income")
+            .classed("inactive", true)
+            .text("Income");
 
         var ageLabel = xLabelsGroup.append("text")
             .attr("x", 0)
@@ -183,7 +192,7 @@ d3.csv("assets/data/data.csv").then(function(healthData){
             .attr("value","age")
             .classed("active", true)
             .text("Age");
-
+        
         // Creates the label group for the y axis
         var yLabelsGroup = chartGroup.append("g")
             .attr("transform","rotate(-90)")
@@ -197,10 +206,18 @@ d3.csv("assets/data/data.csv").then(function(healthData){
             .classed("active", true)
             .text("Smoking");
 
+        var healthcareLabel = yLabelsGroup.append("text")
+            .attr("y", 0 - margin.left)
+            .attr("x", 0 - (height / 2))
+            .attr("dy", "3em")
+            .attr("value","healthcare")
+            .classed("inactive", true)
+            .text("Healthcare");
+
         var obesityLabel = yLabelsGroup.append("text")
             .attr("y", 0 - margin.left)
             .attr("x", 0 - (height / 2))
-            .attr("dy", "1em")
+            .attr("dy", "2em")
             .attr("value","obesity")
             .classed("inactive", true)
             .text("Obesity");
@@ -221,6 +238,40 @@ d3.csv("assets/data/data.csv").then(function(healthData){
                  circlesGroup = renderCirclesX(circlesGroup, xLinearScale, chosenXAxis);
 
                  textGroup = renderTextX(textGroup, xLinearScale, chosenXAxis);
+                
+                if (chosenXAxis == "income"){
+                    ageLabel
+                     .classed("active", false)
+                     .classed("inactive", true)
+                    incomeLabel
+                     .classed("active", true)
+                     .classed("inactive", false)
+                    povertyLabel
+                     .classed("active", false)
+                     .classed("inactive", true)
+                     
+                } else if (chosenXAxis == "poverty"){
+                    ageLabel
+                     .classed("active", false)
+                     .classed("inactive", true)
+                    incomeLabel
+                     .classed("active", false)
+                     .classed("inactive", true)
+                    povertyLabel
+                     .classed("active", true)
+                     .classed("inactive", false)
+                
+                } else{
+                    ageLabel
+                     .classed("active", true)
+                     .classed("inactive", false)
+                    incomeLabel
+                     .classed("active", false)
+                     .classed("inactive", true)
+                    povertyLabel
+                     .classed("active", false)
+                     .classed("inactive", true)
+                };
              };
             
          });
@@ -230,8 +281,6 @@ d3.csv("assets/data/data.csv").then(function(healthData){
          .on("click",function(){
 
             var value = d3.select(this).attr("value");
-            
-            console.log(value);
 
              if (value !== chosenYAxis){
                  chosenYAxis = value;
@@ -243,6 +292,40 @@ d3.csv("assets/data/data.csv").then(function(healthData){
                  circlesGroup = renderCirclesY(circlesGroup, yLinearScale, chosenYAxis);
                  
                  textGroup = renderTextY(textGroup, yLinearScale, chosenYAxis);
+                
+                if (chosenYAxis == "healthcare"){
+                    smokingLabel
+                     .classed("active", false)
+                     .classed("inactive", true)
+                    healthcareLabel
+                     .classed("active", true)
+                     .classed("inactive", false)
+                    obesityLabel
+                     .classed("active", false)
+                     .classed("inactive", true)
+                     
+                } else if (chosenYAxis == "obesity"){
+                    smokingLabel
+                     .classed("active", false)
+                     .classed("inactive", true)
+                    healthcareLabel
+                     .classed("active", false)
+                     .classed("inactive", true)
+                    obesityLabel
+                     .classed("active", true)
+                     .classed("inactive", false)
+                
+                } else{
+                    smokingLabel
+                     .classed("active", true)
+                     .classed("inactive", false)
+                    healthcareLabel
+                     .classed("active", false)
+                     .classed("inactive", true)
+                    obesityLabel
+                     .classed("active", false)
+                     .classed("inactive", true)
+                };
              };
 
          });
