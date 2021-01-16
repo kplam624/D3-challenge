@@ -233,21 +233,21 @@ d3.csv("assets/data/data.csv").then(function(healthData){
             .attr("y",60)
             .attr("value", "poverty")
             .classed("inactive",true)
-            .text("Poverty");
+            .text("In Poverty(%)");
 
         var obesityLabel = xLabelsGroup.append("text")
             .attr("x", 0)
             .attr("y",40)
             .attr("value","obesity")
             .classed("inactive", true)
-            .text("Obesity");
+            .text("Obese (%)");
 
         var ageLabel = xLabelsGroup.append("text")
             .attr("x", 0)
             .attr("y",20)
             .attr("value","age")
             .classed("active", true)
-            .text("Age");
+            .text("Age (Median)");
         
         // Creates the label group for the y axis
         var yLabelsGroup = chartGroup.append("g")
@@ -260,7 +260,7 @@ d3.csv("assets/data/data.csv").then(function(healthData){
             .attr("dy", "3em")
             .attr("value", "smokes")
             .classed("active", true)
-            .text("Smoking");
+            .text("Smoking (%)");
 
         var healthcareLabel = yLabelsGroup.append("text")
             .attr("y", 0 - margin.left)
@@ -268,7 +268,7 @@ d3.csv("assets/data/data.csv").then(function(healthData){
             .attr("dy", "2em")
             .attr("value","healthcare")
             .classed("inactive", true)
-            .text("Healthcare");
+            .text("Lacks Healthcare(%)");
 
         var incomeLabel = yLabelsGroup.append("text")
             .attr("y", 0 - margin.left)
@@ -276,7 +276,7 @@ d3.csv("assets/data/data.csv").then(function(healthData){
             .attr("dy", "1em")
             .attr("value","income")
             .classed("inactive", true)
-            .text("Income");
+            .text("Household Income(Median)");
 
 
         var circlesGroup = updateToolTip(chosenXAxis,chosenYAxis,circlesGroup);
