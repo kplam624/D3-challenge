@@ -64,6 +64,7 @@ function renderYAxes(newYScale, yAxis){
     return yAxis;
 };
 
+// Changes the position of the circle based on the x-axis.
 function renderCirclesX(circlesGroup, newXScale, chosenXAxis) {
 
     circlesGroup.transition()
@@ -171,6 +172,7 @@ d3.csv("assets/data/data.csv").then(function(healthData){
             .attr("y", 0 - margin.left)
             .attr("x", 0 - (height / 2))
             .attr("dy", "4em")
+            .attr("value", "smokes")
             .classed("active", true)
             .text("Smoking");
 
@@ -178,6 +180,7 @@ d3.csv("assets/data/data.csv").then(function(healthData){
             .attr("y", 0 - margin.left)
             .attr("x", 0 - (height / 2))
             .attr("dy", "1em")
+            .attr("value","obesity")
             .classed("inactive", true)
             .text("Obesity");
 
