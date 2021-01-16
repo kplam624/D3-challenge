@@ -41,7 +41,7 @@ function xScale(healthData, chosenXAxis){
 // Creates the y scale based on the y values given
 function yScale(healthData, chosenYAxis){
     var yLinearScale = d3.scaleLinear()
-        .domain([d3.min(healthData, d => d[chosenYAxis]) * 0.9, d3.max(healthData, d => d[chosenYAxis]) * 1.1])
+        .domain([d3.min(healthData, d => d[chosenYAxis]) * 0.9, d3.max(healthData, d => d[chosenYAxis]) * 1.05])
         .range([height,0]);
         
         return yLinearScale
@@ -141,22 +141,24 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
       }
   
     //   The format of the tooltip, with the help of css styles
-    var toolTip = d3.tip()
+    var circleToolTip = d3.tip()
       .attr("class", "d3-tip")
-      .offset([-6,3])
+      .offset([1,-4])
       .html(function(d) {
         return (`${d.abbr}<br>${xlabel} ${d[chosenXAxis]}<br>${ylabel} ${d[chosenYAxis]}`);
       });
   
-    circlesGroup.call(toolTip);
+    circlesGroup.call(circleToolTip);
       
     // Shows and hides the tool tip on the mouseover event.
-    circlesGroup.on("mouseover", toolTip.show)
+    circlesGroup.on("mouseover", circleToolTip.show)
       // onmouseout event
-      .on("mouseout", toolTip.hide);
+      .on("mouseout", circleToolTip.hide);
   
     //   Returns the circles group
     return circlesGroup;
+
+
   };
 
 // Reading the csv file
@@ -197,11 +199,10 @@ d3.csv("assets/data/data.csv").then(function(healthData){
         .data(healthData)
         .enter()
         .append("circle")
+        .classed("stateCircle", true)
         .attr("cx", d => xLinearScale(d[chosenXAxis]))
         .attr("cy", d => yLinearScale(d[chosenYAxis]))
-        .attr("r", 10)
-        .attr("fill", "gray")
-        .attr("stroke", "black");
+        .attr("r", 10);
 
     // The text on top of the scatter plot points
     var textGroup = chartGroup.append("g")
@@ -209,6 +210,7 @@ d3.csv("assets/data/data.csv").then(function(healthData){
         .data(healthData)
         .enter()
         .append("text")
+        .classed("stateText", true)
         .text(function(d){
             return d.abbr;
         })
@@ -218,10 +220,7 @@ d3.csv("assets/data/data.csv").then(function(healthData){
         .attr("y",function(d){
             return yLinearScale(d[chosenYAxis])
         })
-        .attr("dx","-.5em")
-        .attr("dy",".25em")
-        .attr("font-size","8px")
-        .attr("fill","black");
+        .attr("font-size","7px");
 
         // Created the label group for the x axis
         var xLabelsGroup = chartGroup.append("g")
