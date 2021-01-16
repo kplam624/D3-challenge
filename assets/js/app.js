@@ -90,6 +90,8 @@ function renderTextX(textGroup, newXScale, chosenXAxis){
      .attr("x",function(d){
         return newXScale(d[chosenXAxis]);
      });
+    
+    return textGroup;
 };
 
 function renderTextY(textGroup, newYScale, chosenYAxis){
@@ -207,8 +209,8 @@ d3.csv("assets/data/data.csv").then(function(healthData){
              
             var value = d3.select(this).attr("value");
             
-             if (value !== chosenXAxis){
-                 chosenXAxis = value;
+             if (value !== chosenXAxis){ 
+                chosenXAxis = value;
 
                  xLinearScale = xScale(healthData, chosenXAxis);
 
@@ -216,7 +218,7 @@ d3.csv("assets/data/data.csv").then(function(healthData){
 
                  circlesGroup = renderCirclesX(circlesGroup, xLinearScale, chosenXAxis);
 
-                 textGroup = renderTextX(textGroup, newXScale, chosenXAxis);
+                 textGroup = renderTextX(textGroup, xLinearScale, chosenXAxis);
              };
             
          });
